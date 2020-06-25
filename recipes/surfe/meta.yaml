@@ -1,0 +1,89 @@
+{% set name = "surfe" %}
+{% set version = "3.8.2" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/MichaelHillier/surfe/archive/master.zip
+  # If getting the source from GitHub, remove the line above,
+  # uncomment the line below, and modify as needed. Use releases if available:
+  # url: https://github.com/simplejson/simplejson/releases/download/{{ version }}/simplejson-{{ version }}.tar.gz
+  # and otherwise fall back to archive: 
+  # url: https://github.com/simplejson/simplejson/archive/v{{ version }}.tar.gz
+  sha256: d58439c548433adcda98e695be53e526ba940a4b9c44fb9a05d92cd495cdd47f
+  # sha256 is the preferred checksum -- you can get it for a file with:
+  #  `openssl sha256 <file name>`.
+  # You may need the openssl package, available on conda-forge:
+  #  `conda install openssl -c conda-forge``
+
+build:
+  number: 0
+  # If the installation is complex, or different between Unix and Windows, use separate bld.bat and build.sh files instead of this key.
+  # By default, the package will be built for the Python versions supported by conda-forge and for all major OSs.
+  # Add the line "skip: True  # [py<35]" (for example) to limit to Python 3.5 and newer, or "skip: True  # [not win]" to limit to Windows.
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  build:
+    # If your project compiles code (such as a C extension) then add the required compilers as separate entries here.
+    # Compilers are named 'c', 'cxx' and 'fortran'.
+    - {{ compiler('cxx') }}
+    - cmake
+  host:
+    - python
+    - eigen
+    - vtk
+    - qt5
+    - pybind11
+  run:
+    - python
+    - eigen
+    - vtk
+    - qt5
+    - pybind11
+
+test:
+  # Some packages might need a `test/commands` key to check CLI.
+  # List all the packages/modules that `run_test.py` imports.
+  imports:
+    - simplejson
+    - simplejson.test
+
+# below copied from https://github.com/nostress-noworries/nostress/blob/master/conda-recipes/mrcpp/meta.yaml
+outputs:
+  - name: surfe
+    files:
+      - include/surfe  # [unix]
+      - lib/libsurfe*  # [unix]
+      - share/cmake/surfe  # [unix]
+      - share/surfe/mwfilters  # [unix]
+      - Library/include/surfe # [win]
+      - Library/lib/surfe*  # [win]
+      - Library/share/cmake/surfe  # [win]
+      - Library/share/surfe/mwfilters  # [win]
+
+
+about:
+  home: https://github.com/MichaelHillier/surfe
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE.txt
+  summary: 'Surface modelling engine for geological applications '
+  # The remaining entries in this section are optional, but recommended.
+  description: |
+    This is a library for the SURFE algorithm that implements generalized
+    interpolation using multivariate and scattered structural geologic
+    constraints. It accepts 4 types of constraints: inequalities,
+    interface, planar, and tangent points. It computes an
+    interpolant/approximate for the constraints and evaluates that
+    function at the user supplied points.
+  doc_url: https://github.com/MichaelHillier/surfe
+  dev_url: https://github.com/MichaelHillier/surfe
+
+extra:
+  recipe-maintainers:
+    - AndrewAnnex
+    - MichaelHillier
+    - lachlangrose
